@@ -1,0 +1,65 @@
+# ArgoCD ApplicationSet Template
+# Dynamically generates ArgoCD Applications from a Git-based configuration file
+# Uses the Git generator pattern to read app specifications and create multiple Applications
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bar-appset-ss-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: parent-bootstrap-appset
+    app.kubernetes.io/instance: argocd-applicationset
+    app.kubernetes.io/component: parent-applicationset
+    gitops.foo.io/bootstrap-role: "parent"
+    gitops.foo.io/bootstrap-app: "true"
+  annotations:
+    argocd.argoproj.io/enable-prune: "true"
+spec:
+  # Enable Go templating for advanced template logic
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  
+  generators:
+    # Git generator pulls configuration from a Git repository
+    - git:
+        repoURL: https://dev.azure.com/org-bar/project-foo/_git/foo-appset-config
+        revision: main
+        files:
+          # Path to JSON configuration file containing application definitions
+          - path: "bom/dev/config.json"
+  
+  template:
+    metadata:
+      name: '{{.name}}'
+      labels:
+        app.kubernetes.io/instance: argocd-application
+        app.kubernetes.io/component: child-application
+        gitops.foo.io/bootstrap-role: "child"
+        gitops.foo.io/bootstrap-app: "true"
+    spec:
+      project: '{{.project}}'
+      
+      source:
+        repoURL: '{{.source}}'
+        targetRevision: '{{.revision}}'
+        path: '{{.manifestPath}}'
+        directory:
+          recurse: false
+      
+      destination:
+        name: '{{.cluster}}'
+        namespace: '{{.namespace}}'
+      
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m

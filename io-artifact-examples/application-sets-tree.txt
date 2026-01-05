@@ -1,0 +1,25 @@
+.
+├── team-a
+│   ├── team-a-gateway-main.yml
+│   └── team-a-api-main.yml
+├── team-c
+│   ├── team-c-absence-claim-data-enrichment-main.yaml
+│   ├── team-c-absence-claim-data-enrichment-preview.yaml
+│   ├── team-c-absence-claim-ingestion-main.yaml
+│   ├── team-c-absence-claim-ingestion-preview.yaml
+│   ├── team-c-absence-events-processor-main.yaml
+│   ├── team-c-eoi-web-ag-main.yaml
+│   └── team-c-eoi-web-ag-preview.yaml
+├── team-e
+│   └── team-e-hello-gitops-main.yaml
+├── team-h
+│   ├── team-h-billing-service-preview.yaml
+│   ├── team-h-billing-service.yaml
+│   ├── team-h-claim-service-preview.yaml
+│   ├── team-h-claim-service.yaml
+│   ├── team-h-common-resources.yaml
+│   ├── team-h-contact-service-preview.yaml
+│   ├── team-h-contact-service.yaml
+│   ├── team-h-content-management-service-preview.yaml
+│   ├── team-h-content-management-service.yaml
+│   └── team-h-spa-service.yaml

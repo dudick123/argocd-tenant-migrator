@@ -1,0 +1,11 @@
+[
+  {
+    "name": "abcontentmanagement-data-konnect-test",
+    "source": "https://dev.azure.com/tenant-foo/bar-apis/_git/content-management-k8s-manifests",
+    "revision": "main",
+    "manifestPath": "manifests/test",
+    "project": "bar-apis",
+    "namespace": "bar-apis-gitops-dev",
+    "cluster": "foo-gitops-eastus-dev"
+  }
+]

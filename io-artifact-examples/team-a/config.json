@@ -1,0 +1,20 @@
+[
+  {
+    "name": "team-a-api-main",
+    "source": "https://github.com/myorg/team-a-api",
+    "revision": "main",
+    "manifestPath": "manifests/prod",
+    "project": "team-a-project",
+    "namespace": "team-a-prod",
+    "cluster": "foo-bar-wus2-aks"
+  },
+  {
+    "name": "team-a-gateway-main",
+    "source": "https://github.com/myorg/team-a-gateway",
+    "revision": "main",
+    "manifestPath": "k8s/production",
+    "project": "team-a-project",
+    "namespace": "team-a-gateway",
+    "cluster": "foo-bar-wus2-aks"
+  }
+]

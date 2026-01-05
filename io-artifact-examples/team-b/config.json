@@ -1,0 +1,11 @@
+[
+  {
+    "name": "team-b-service-main",
+    "source": "https://gitlab.com/team-b/service",
+    "revision": "main",
+    "manifestPath": "deploy/prod",
+    "project": "team-b-apps",
+    "namespace": "team-b-services",
+    "cluster": "foo-bar-wus2-aks"
+  }
+]
