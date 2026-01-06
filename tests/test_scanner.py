@@ -39,15 +39,16 @@ class TestIsPreviewFile:
 class TestIsValidYaml:
     """Tests for the is_valid_yaml function."""
 
-    def test_empty_file_is_valid(self, tmp_path):
-        """Empty files should be considered valid YAML."""
+    def test_empty_file_is_invalid(self, tmp_path):
+        """Empty files should be considered invalid YAML."""
         yaml_file = tmp_path / "empty.yaml"
         yaml_file.write_text("")
 
         is_valid, error_msg = is_valid_yaml(yaml_file)
 
-        assert is_valid is True
-        assert error_msg is None
+        assert is_valid is False
+        assert error_msg is not None
+        assert "Empty" in error_msg or "no content" in error_msg
 
     def test_valid_yaml_file(self, tmp_path):
         """Valid YAML should pass validation."""

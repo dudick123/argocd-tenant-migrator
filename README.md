@@ -208,7 +208,7 @@ Detailed File Information:
 
 The scanner validates YAML syntax for each file:
 
-- **Empty files** are considered valid YAML (representing null/empty document)
+- **Empty files** are considered invalid and reported with an error message
 - **Malformed YAML** is detected and reported with error messages
 - **Binary files** with `.yaml` extension are caught and reported as invalid
 

@@ -151,9 +151,15 @@ class TestCreateFileDetailsTable:
         assert len(table.columns) == 4
 
     def test_table_shows_empty_file_note(self):
-        """Detailed table should note empty files."""
+        """Detailed table should note empty invalid files."""
         files = [
-            FileInfo(path=Path("/test/empty.yaml"), is_valid=True, is_preview=False, size_bytes=0),
+            FileInfo(
+                path=Path("/test/empty.yaml"),
+                is_valid=False,
+                is_preview=False,
+                error_message="Empty YAML file (no content)",
+                size_bytes=0
+            ),
         ]
 
         result = ScanResult(
@@ -161,8 +167,8 @@ class TestCreateFileDetailsTable:
             recursive=False,
             directories_scanned=1,
             total_yaml_files=1,
-            valid_yaml_files=1,
-            invalid_yaml_files=0,
+            valid_yaml_files=0,
+            invalid_yaml_files=1,
             main_branch_files=1,
             preview_branch_files=0,
             files=files,

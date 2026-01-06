@@ -30,7 +30,7 @@ def is_preview_file(file_path: Path) -> bool:
 def is_valid_yaml(file_path: Path) -> tuple[bool, str | None]:
     """Validate if a file contains valid YAML.
 
-    Empty files are considered valid YAML (represents null/empty document).
+    Empty files are considered invalid and will return an error.
 
     Args:
         file_path: Path to the YAML file to validate
@@ -44,9 +44,9 @@ def is_valid_yaml(file_path: Path) -> tuple[bool, str | None]:
         with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
-        # Empty files are valid YAML
+        # Empty files are invalid
         if not content or not content.strip():
-            return (True, None)
+            return (False, "Empty YAML file (no content)")
 
         # Try to parse the YAML
         yaml.safe_load(content)
