@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: bar-mule-preview-dev
+  namespace: argocd
+spec:
+  generators:
+    - scmProvider:
+        filters:
+          - repositoryMatch: bar-gitops-java-example-k8s-manifests$
+            pathsExist: [manifests/dev]
+            branchMatch: ^.+-preview$
+        azureDevOps:
+          organization: Foo-Org
+          api: https://dev.azure.com
+          allBranches: true
+          teamProject: bar-project
+          accessTokenRef:
+            secretName: foo-repsository-credentials
+            key: password
+        requeueAfterSeconds: 120
+  template:
+    metadata:
+      name: 'bar-mule-{{branchNormalized}}-dev'
+    spec:
+      destination:
+        namespace: 'bar-gitops-dev'
+        server: 'https://kubernetes.default.svc'
+      project: foo
+      source:
+        path: ./manifests/dev
+        repoURL: 'https://dev.azure.com/Foo-Org/bar-project/_git/bar-gitops-java-example-k8s-manifests'
+        targetRevision: '{{branch}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+          allowEmpty: true
