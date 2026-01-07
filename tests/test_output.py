@@ -27,6 +27,7 @@ class TestCreateSummaryTable:
             invalid_yaml_files=2,
             main_branch_files=7,
             preview_branch_files=3,
+            applicationset_files=6,
             files=[],
             scan_duration_seconds=1.234,
             errors=[],
@@ -49,6 +50,7 @@ class TestCreateSummaryTable:
             invalid_yaml_files=0,
             main_branch_files=5,
             preview_branch_files=0,
+            applicationset_files=5,
             files=[],
             scan_duration_seconds=2.567,
             errors=[],
@@ -66,8 +68,8 @@ class TestCreateFileTree:
     def test_creates_tree_for_files(self):
         """File tree should be created with file information."""
         files = [
-            FileInfo(path=Path("/test/file1.yaml"), is_valid=True, is_preview=False, size_bytes=100),
-            FileInfo(path=Path("/test/file2.yaml"), is_valid=False, is_preview=False, size_bytes=200),
+            FileInfo(path=Path("/test/file1.yaml"), is_valid=True, is_preview=False, is_applicationset=True, size_bytes=100),
+            FileInfo(path=Path("/test/file2.yaml"), is_valid=False, is_preview=False, is_applicationset=False, size_bytes=200),
         ]
 
         result = ScanResult(
@@ -79,6 +81,7 @@ class TestCreateFileTree:
             invalid_yaml_files=1,
             main_branch_files=2,
             preview_branch_files=0,
+            applicationset_files=1,
             files=files,
             scan_duration_seconds=0.5,
             errors=[],
@@ -99,6 +102,7 @@ class TestCreateFileTree:
             invalid_yaml_files=0,
             main_branch_files=0,
             preview_branch_files=0,
+            applicationset_files=0,
             files=[],
             scan_duration_seconds=0.1,
             errors=[],
@@ -119,12 +123,14 @@ class TestCreateFileDetailsTable:
                 path=Path("/test/valid.yaml"),
                 is_valid=True,
                 is_preview=False,
+                is_applicationset=True,
                 size_bytes=0,
             ),
             FileInfo(
                 path=Path("/test/invalid.yaml"),
                 is_valid=False,
                 is_preview=False,
+                is_applicationset=False,
                 error_message="YAML syntax error",
                 size_bytes=150,
             ),
@@ -139,6 +145,7 @@ class TestCreateFileDetailsTable:
             invalid_yaml_files=1,
             main_branch_files=2,
             preview_branch_files=0,
+            applicationset_files=1,
             files=files,
             scan_duration_seconds=0.5,
             errors=[],
@@ -157,6 +164,7 @@ class TestCreateFileDetailsTable:
                 path=Path("/test/empty.yaml"),
                 is_valid=False,
                 is_preview=False,
+                is_applicationset=False,
                 error_message="Empty YAML file (no content)",
                 size_bytes=0
             ),
@@ -171,6 +179,7 @@ class TestCreateFileDetailsTable:
             invalid_yaml_files=1,
             main_branch_files=1,
             preview_branch_files=0,
+            applicationset_files=0,
             files=files,
             scan_duration_seconds=0.1,
             errors=[],

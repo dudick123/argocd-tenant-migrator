@@ -71,6 +71,7 @@ def create_summary_table(result: ScanResult) -> Table:
 
     table.add_row("Directories Scanned", str(result.directories_scanned))
     table.add_row("Total YAML Files Found", str(result.total_yaml_files))
+    table.add_row("ApplicationSet Files", str(result.applicationset_files))
     table.add_row("Main Branch Files", str(result.main_branch_files))
     table.add_row("Preview Branch Files", str(result.preview_branch_files))
     table.add_row("Valid YAML Files", str(result.valid_yaml_files))

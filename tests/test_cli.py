@@ -103,3 +103,15 @@ class TestCLI:
         assert result.exit_code == 0
         assert "Main Branch Files" in result.stdout
         assert "Preview Branch Files" in result.stdout
+
+    def test_scan_shows_applicationset_count(self):
+        """Test that CLI shows ApplicationSet count in output."""
+        test_data_dir = Path(__file__).parent.parent / "io-artifact-examples" / "input" / "team-a"
+
+        if not test_data_dir.exists():
+            return
+
+        result = runner.invoke(app, ["--input-path", str(test_data_dir)])
+
+        assert result.exit_code == 0
+        assert "ApplicationSet Files" in result.stdout

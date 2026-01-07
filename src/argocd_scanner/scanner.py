@@ -63,6 +63,29 @@ def is_valid_yaml(file_path: Path) -> tuple[bool, str | None]:
         return (False, f"Error reading file: {str(e)}")
 
 
+def is_applicationset(file_path: Path) -> bool:
+    """Detect if a YAML file contains an ArgoCD ApplicationSet.
+
+    Checks if the YAML document has kind: ApplicationSet.
+
+    Args:
+        file_path: Path to the YAML file to check
+
+    Returns:
+        True if the file is an ApplicationSet, False otherwise
+    """
+    try:
+        with open(file_path, encoding="utf-8") as f:
+            content = yaml.safe_load(f)
+
+        if isinstance(content, dict):
+            return content.get("kind") == "ApplicationSet"
+
+        return False
+    except Exception:
+        return False
+
+
 def scan_directory(path: Path, recursive: bool, verbose: bool) -> ScanResult:
     """Scan a directory for YAML files and validate them.
 
@@ -120,6 +143,7 @@ def scan_directory(path: Path, recursive: bool, verbose: bool) -> ScanResult:
     invalid_count = sum(1 for f in files if not f.is_valid)
     main_count = sum(1 for f in files if not f.is_preview)
     preview_count = sum(1 for f in files if f.is_preview)
+    appset_count = sum(1 for f in files if f.is_applicationset)
 
     scan_duration = time.time() - start_time
 
@@ -132,6 +156,7 @@ def scan_directory(path: Path, recursive: bool, verbose: bool) -> ScanResult:
         invalid_yaml_files=invalid_count,
         main_branch_files=main_count,
         preview_branch_files=preview_count,
+        applicationset_files=appset_count,
         files=files,
         scan_duration_seconds=scan_duration,
         errors=errors,
@@ -157,12 +182,18 @@ def _process_file(file_path: Path, files: list[FileInfo], errors: list[str], ver
         # Detect preview branch
         is_preview = is_preview_file(file_path)
 
+        # Detect ApplicationSet (only for valid YAML files)
+        is_appset = False
+        if is_valid:
+            is_appset = is_applicationset(file_path)
+
         # Add to files list
         files.append(
             FileInfo(
                 path=file_path,
                 is_valid=is_valid,
                 is_preview=is_preview,
+                is_applicationset=is_appset,
                 error_message=error_message,
                 size_bytes=size_bytes,
             )

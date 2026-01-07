@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from argocd_scanner.scanner import is_preview_file, is_valid_yaml, scan_directory
+from argocd_scanner.scanner import is_applicationset, is_preview_file, is_valid_yaml, scan_directory
 
 
 class TestIsPreviewFile:
@@ -34,6 +34,42 @@ class TestIsPreviewFile:
         """'preview' as part of another word should be detected."""
         path = Path("/test/previewer.yaml")
         assert is_preview_file(path) is True
+
+
+class TestIsApplicationset:
+    """Tests for ApplicationSet detection."""
+
+    def test_valid_applicationset(self, tmp_path):
+        """Valid ApplicationSet should be detected."""
+        yaml_file = tmp_path / "appset.yaml"
+        yaml_file.write_text("""apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: test-appset
+""")
+        assert is_applicationset(yaml_file) is True
+
+    def test_non_applicationset_yaml(self, tmp_path):
+        """Non-ApplicationSet YAML should return False."""
+        yaml_file = tmp_path / "configmap.yaml"
+        yaml_file.write_text("""apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-config
+""")
+        assert is_applicationset(yaml_file) is False
+
+    def test_invalid_yaml(self, tmp_path):
+        """Invalid YAML should return False."""
+        yaml_file = tmp_path / "invalid.yaml"
+        yaml_file.write_text("key: [invalid")
+        assert is_applicationset(yaml_file) is False
+
+    def test_empty_file(self, tmp_path):
+        """Empty file should return False."""
+        yaml_file = tmp_path / "empty.yaml"
+        yaml_file.write_text("")
+        assert is_applicationset(yaml_file) is False
 
 
 class TestIsValidYaml:
@@ -186,3 +222,32 @@ class TestScanDirectory:
 
         assert main_file.is_preview is False
         assert preview_file.is_preview is True
+
+    def test_scan_counts_applicationsets(self, tmp_path):
+        """Scan should count ApplicationSet files."""
+        # Create ApplicationSet file
+        appset_file = tmp_path / "appset.yaml"
+        appset_file.write_text("""apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: test
+""")
+        # Create non-ApplicationSet file
+        other_file = tmp_path / "configmap.yaml"
+        other_file.write_text("""apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test
+""")
+
+        result = scan_directory(tmp_path, recursive=False, verbose=False)
+
+        assert result.total_yaml_files == 2
+        assert result.applicationset_files == 1
+
+        # Check individual file flags
+        appset = next(f for f in result.files if "appset" in f.path.name)
+        configmap = next(f for f in result.files if "configmap" in f.path.name)
+
+        assert appset.is_applicationset is True
+        assert configmap.is_applicationset is False
